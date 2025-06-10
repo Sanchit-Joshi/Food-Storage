@@ -1,0 +1,68 @@
+{% load widget_tweaks %}
+{% include 'inventory/header.html' %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Edit Food Item</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h2>Edit Food Item</h2>
+        <form method="POST" novalidate>
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label for="id_name" class="form-label">Name</label>
+                <input type="text" name="name" id="id_name" class="form-control" value="{{ food.name }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="id_category" class="form-label">Category</label>
+                <input type="text" name="category" id="id_category" class="form-control" value="{{ food.category }}"
+                    required>
+            </div>
+
+            <div class="mb-3">
+                <label for="id_quantity" class="form-label">Quantity</label>
+                <input type="number" name="quantity" id="id_quantity" class="form-control" value="{{ food.quantity }}"
+                    required>
+            </div>
+            <div class="mb-3">
+                <label for="id_unit" class="form-label">Unit</label>
+                <input type="text" name="unit" id="id_unit" class="form-control" value="{{ food.unit }}" required>
+            </div>
+            <!-- <div class="mb-3">
+                <label for="id_unit" class="form-label">Unit</label>
+                <select name="unit" id="id_unit" class="form-control" required>
+                    {% for u in units %}
+                    <option value="{{ u }}" {% if food.unit==u %}selected{% endif %}>{{ u }}</option>
+                    {% endfor %}
+                </select>
+            </div> -->
+            <div class="mb-3">
+                <label for="id_ideal_quantity" class="form-label">Ideal Quantity</label>
+                <input type="number" name="ideal_quantity" value="{{ food.ideal_quantity }}" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label for="id_best_before" class="form-label">Best Before</label>
+                <input type="date" name="best_before" id="id_best_before" class="form-control"
+                    value="{{ food.best_before|date:'Y-m-d' }}" required>
+            </div>
+
+            <button type="submit" class="btn btn-success">Save Changes</button>
+            <a href="{% url 'home' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

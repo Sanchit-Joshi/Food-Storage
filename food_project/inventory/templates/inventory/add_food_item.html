@@ -1,0 +1,96 @@
+{% load widget_tweaks %}
+{% include 'inventory/header.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Add Food Item</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Add Food Item</h2>
+    <form method="POST" novalidate>
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="id_name" class="form-label">Name</label>
+            {{ form.name|add_class:"form-control" }}
+            {% if form.name.errors %}
+                <div class="text-danger">{{ form.name.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label for="id_category" class="form-label">Category</label>
+            {{ form.category|add_class:"form-control" }}
+            {% if form.category.errors %}
+                <div class="text-danger">{{ form.category.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label for="id_quantity" class="form-label">Quantity</label>
+            {{ form.quantity|add_class:"form-control" }}
+            {% if form.quantity.errors %}
+                <div class="text-danger">{{ form.quantity.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label for="id_unit" class="form-label">Unit</label>
+            <input type="text" name="unit" id="id_unit" class="form-control" placeholder="e.g., kg, g, l, pcs">
+        </div>
+
+        <div class="mb-3">
+            <label for="id_ideal_quantity" class="form-label">Ideal Quantity</label>
+            {{ form.ideal_quantity|add_class:"form-control" }}
+            {% if form.ideal_quantity.errors %}
+                <div class="text-danger">{{ form.ideal_quantity.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label for="id_best_before" class="form-label">Best Before</label>
+            {{ form.best_before|add_class:"form-control" }}
+            {% if form.best_before.errors %}
+                <div class="text-danger">{{ form.best_before.errors }}</div>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Add Item</button>
+    </form>
+</div>
+
+<!-- JavaScript to autofill unit based on category -->
+<script>
+    const categorySelect = document.getElementById("id_category");
+    const unitInput = document.getElementById("id_unit");
+
+    const defaultUnits = {
+        'Dairy': 'l',
+        'Vegetables': 'kg',
+        'Fruits': 'kg',
+        'Spices': 'g',
+        'Snacks': 'packs',
+        'Meat': 'kg',
+        'Tofu': 'g'
+    };
+
+    categorySelect.addEventListener("change", function () {
+        const selectedCategory = categorySelect.options[categorySelect.selectedIndex].text;
+        const defaultUnit = defaultUnits[selectedCategory];
+        if (defaultUnit) {
+            unitInput.value = defaultUnit;
+        } else {
+            unitInput.value = '';  
+        }
+    });
+</script>
+
+<!-- Bootstrap JS Bundle CDN -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

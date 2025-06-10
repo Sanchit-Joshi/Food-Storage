@@ -1,0 +1,11 @@
+<h2>Search Results{% if query %} for "{{ query }}"{% endif %}</h2>
+
+{% if foods %}
+<ul>
+  {% for food in foods %}
+    <li>{{ food.name }} - Quantity: {{ food.quantity }} - Category: {{ food.category }}</li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>No results found.</p>
+{% endif %}

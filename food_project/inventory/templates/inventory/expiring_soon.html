@@ -1,0 +1,49 @@
+{% include 'inventory/header.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Expiring Soon</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <h2 class="text-center mb-4">⏳ Items Expiring Within a Week</h2>
+    
+    {% if foods %}
+        <table class="table table-bordered table-hover">
+            <thead class="table-warning">
+                <tr>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Quantity</th>
+                    <th>Best Before</th>
+                    <th>Days Left</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for food in foods %}
+                    <tr>
+                        <td>{{ food.name }}</td>
+                        <td>{{ food.category }}</td>
+                        <td>{{ food.quantity }}</td>
+                        <td>{{ food.best_before }}</td>
+                       <td>{{ food.days_left }} day{{ food.days_left|pluralize }} left</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-success text-center" role="alert">
+            No items expiring in the next 7 days!
+        </div>
+    {% endif %}
+    
+    <div class="text-end">
+        <a href="{% url 'home' %}" class="btn btn-secondary mt-3">Back to Home</a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

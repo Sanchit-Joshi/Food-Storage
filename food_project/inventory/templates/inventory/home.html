@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    {% include 'inventory/header.html' %}
+<head>
+
+    <title>Food Storage</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+    <h1 class="mb-4">All Food Items</h1>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for food in foods %}
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ food.name }}</h5>
+                    <p class="card-text">
+                        <strong>Quantity:</strong> {{ food.quantity }}<br>
+                        <strong>Category:</strong> {{ food.category }}<br>
+                        <strong>Best Before:</strong> {{ food.best_before }}
+                    </p>
+
+                    <!-- Buttons -->
+                  <a href="{% url 'edit_food' food.id %}" class="btn btn-info">Edit</a>
+                    <a href="{% url 'delete_food' food.id %}" class="btn btn-danger">Delete</a>
+                 
+
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>No food items available.</p>
+        {% endfor %}
+    </div>
+</div>
+
+</body>
+</html>
+ {% include 'inventory/footer.html' %}
