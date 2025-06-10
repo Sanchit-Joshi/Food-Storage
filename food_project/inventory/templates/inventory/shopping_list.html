@@ -1,43 +1,416 @@
-<!-- templates/inventory/shopping_list.html -->
-{% include 'inventory/header.html' %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Shopping List</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-<div class="container mt-5">
-    <h2 class="mb-4">🛒 Shopping List</h2>
-    
-    <button onclick="window.print()" class="btn btn-outline-primary">🖨️ Print</button>
-    {% if items_to_buy %}
-        <table class="table table-bordered table-hover">
-            <thead class="table-dark">
-                <tr>
-                    <th>Name</th>
-                    <!-- <th>Category</th> -->
-                    <!-- <th>Current Quantity</th>
-                    <th>Ideal Quantity</th> -->
-                    <th>Needed Quantity</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in items_to_buy %}
-                    <tr>
-                        <td>{{ item.name }}</td>
-                        <!-- <td>{{ item.category }}</td> -->
-                        <!-- <td>{{ item.current_quantity }}</td>
-                        <td>{{ item.ideal_quantity }}</td> -->
-                        <td><strong>{{ item.needed_quantity }}</strong></td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p class="alert alert-success">Everything is sufficiently stocked! ✅</p>
-    {% endif %}
+{% extends 'inventory/base.html' %} {% block title %}Shopping List - Food
+Storage Manager{% endblock %} {% block extra_css %}
+<style>
+  .shopping-item {
+    transition: all 0.3s ease;
+  }
+
+  .shopping-item:hover {
+    background-color: #f8f9fa;
+  }
+
+  .shopping-item.checked {
+    opacity: 0.6;
+    text-decoration: line-through;
+  }
+
+  .print-styles {
+    display: none;
+  }
+
+  @media print {
+    .no-print {
+      display: none !important;
+    }
+
+    .print-styles {
+      display: block;
+    }
+
+    body {
+      background: white !important;
+    }
+
+    .card {
+      box-shadow: none !important;
+      border: 1px solid #dee2e6 !important;
+    }
+
+    .page-header {
+      background: white !important;
+      color: black !important;
+      border-bottom: 2px solid #dee2e6;
+    }
+  }
+
+  .category-section {
+    border-left: 4px solid var(--primary-color);
+    background: linear-gradient(
+      135deg,
+      rgba(44, 85, 48, 0.05) 0%,
+      rgba(255, 255, 255, 1) 100%
+    );
+  }
+
+  .item-priority {
+    width: 8px;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-radius: 4px 0 0 4px;
+  }
+
+  .priority-high {
+    background-color: #dc3545;
+  }
+  .priority-medium {
+    background-color: #ffc107;
+  }
+  .priority-low {
+    background-color: #28a745;
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1><i class="fas fa-shopping-cart me-3"></i>Shopping List</h1>
+    <p>Items you need to buy based on your stock levels</p>
+  </div>
 </div>
-</body>
-</html>
+
+<div class="container">
+  {% if items_to_buy %}
+  <!-- Action Buttons -->
+  <div class="card mb-4 no-print">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h6 class="mb-1">Shopping List Actions</h6>
+          <small class="text-muted"
+            >{{ items_to_buy|length }} item{{ items_to_buy|length|pluralize }}
+            to buy</small
+          >
+        </div>
+        <div class="btn-group" role="group">
+          <button onclick="window.print()" class="btn btn-outline-primary">
+            <i class="fas fa-print me-1"></i>Print List
+          </button>
+          <button onclick="exportList()" class="btn btn-outline-info">
+            <i class="fas fa-download me-1"></i>Export
+          </button>
+          <button onclick="shareList()" class="btn btn-outline-success">
+            <i class="fas fa-share me-1"></i>Share
+          </button>
+          <button onclick="clearChecked()" class="btn btn-outline-warning">
+            <i class="fas fa-broom me-1"></i>Clear Checked
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shopping List by Category -->
+  {% regroup items_to_buy by category as category_list %} {% for category in
+  category_list %}
+  <div class="card category-section mb-4">
+    <div class="card-header">
+      <div class="d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">
+          <i class="fas fa-tag me-2"></i>{{ category.grouper }}
+        </h5>
+        <span class="badge bg-primary"
+          >{{ category.list|length }} item{{ category.list|length|pluralize
+          }}</span
+        >
+      </div>
+    </div>
+    <div class="card-body p-0">
+      <div class="list-group list-group-flush">
+        {% for item in category.list %}
+        <div
+          class="list-group-item shopping-item position-relative"
+          data-item-id="{{ item.id }}"
+        >
+          <!-- Priority Indicator -->
+          <div
+            class="item-priority {% if item.urgency == 'high' %}priority-high {% elif item.urgency == 'medium' %}priority-medium {% else %}priority-low{% endif %}"
+          ></div>
+
+          <div class="d-flex align-items-center">
+            <div class="form-check me-3">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="item-{{ item.id }}"
+                onchange="toggleItem(this, '{{ item.id }}')"
+              />
+            </div>
+
+            <div class="flex-grow-1">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <h6 class="mb-1">{{ item.name }}</h6>
+                  <div class="d-flex align-items-center gap-3">
+                    <small class="text-muted">
+                      <i class="fas fa-boxes me-1"></i>
+                      Need:
+                      <strong
+                        >{{ item.needed_quantity }} {{ item.unit }}</strong
+                      >
+                    </small>
+                    <small class="text-muted">
+                      <i class="fas fa-warehouse me-1"></i>
+                      Current: {{ item.current_quantity|default:0 }} {{
+                      item.unit }}
+                    </small>
+                    <small class="text-muted">
+                      <i class="fas fa-target me-1"></i>
+                      Target: {{ item.ideal_quantity }} {{ item.unit }}
+                    </small>
+                  </div>
+                </div>
+
+                <div class="text-end">
+                  <div class="btn-group btn-group-sm no-print" role="group">
+                    <button
+                      class="btn btn-outline-primary"
+                      onclick="editQuantity('{{ item.id }}', '{{ item.name }}', {{ item.needed_quantity }})"
+                    >
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button
+                      class="btn btn-outline-info"
+                      onclick="addNote('{{ item.id }}', '{{ item.name }}')"
+                    >
+                      <i class="fas fa-sticky-note"></i>
+                    </button>
+                  </div>
+
+                  {% if item.urgency == 'high' %}
+                  <span class="badge bg-danger ms-2">Urgent</span>
+                  {% elif item.urgency == 'medium' %}
+                  <span class="badge bg-warning text-dark ms-2">Soon</span>
+                  {% endif %}
+                </div>
+              </div>
+
+              <!-- Notes section -->
+              <div
+                class="mt-2 item-notes"
+                id="notes-{{ item.id }}"
+                style="display: none"
+              >
+                <small class="text-info">
+                  <i class="fas fa-sticky-note me-1"></i>
+                  <span id="note-text-{{ item.id }}"></span>
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
+  <!-- Shopping Summary -->
+  <div class="card mt-4">
+    <div class="card-header">
+      <h5 class="mb-0">
+        <i class="fas fa-calculator me-2"></i>Shopping Summary
+      </h5>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-3">
+          <div class="text-center">
+            <div class="h4 text-primary">{{ items_to_buy|length }}</div>
+            <small class="text-muted">Total Items</small>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="text-center">
+            <div class="h4 text-danger" id="urgentCount">0</div>
+            <small class="text-muted">Urgent Items</small>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="text-center">
+            <div class="h4 text-success" id="checkedCount">0</div>
+            <small class="text-muted">Checked Off</small>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="text-center">
+            <div class="h4 text-info">{{ category_list|length }}</div>
+            <small class="text-muted">Categories</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Print-only header -->
+  <div class="print-styles">
+    <div class="text-center mb-4">
+      <h2>🛒 Shopping List</h2>
+      <p>Generated on {{ "now"|date:"F d, Y" }}</p>
+      <hr />
+    </div>
+  </div>
+
+  {% else %}
+  <!-- No items to buy -->
+  <div class="text-center py-5">
+    <div class="mb-4">
+      <i class="fas fa-check-circle text-success" style="font-size: 4rem"></i>
+    </div>
+    <h3 class="text-success mb-3">You're All Stocked Up!</h3>
+    <p class="text-muted mb-4">
+      All your items are at or above their ideal quantities. No shopping needed
+      right now.
+    </p>
+    <div class="d-flex justify-content-center gap-3">
+      <a href="{% url 'home' %}" class="btn btn-primary">
+        <i class="fas fa-home me-1"></i>Back to Inventory
+      </a>
+      <a href="{% url 'stock_overview' %}" class="btn btn-outline-primary">
+        <i class="fas fa-chart-bar me-1"></i>View Stock Overview
+      </a>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  let itemNotes = {};
+
+  function toggleItem(checkbox, itemId) {
+    const listItem = checkbox.closest(".shopping-item");
+    if (checkbox.checked) {
+      listItem.classList.add("checked");
+    } else {
+      listItem.classList.remove("checked");
+    }
+    updateCounts();
+  }
+
+  function updateCounts() {
+    const checkedItems = document.querySelectorAll(
+      ".shopping-item.checked"
+    ).length;
+    const urgentItems = document.querySelectorAll(".badge.bg-danger").length;
+
+    document.getElementById("checkedCount").textContent = checkedItems;
+    document.getElementById("urgentCount").textContent = urgentItems;
+  }
+
+  function clearChecked() {
+    const checkedItems = document.querySelectorAll(".shopping-item.checked");
+    if (checkedItems.length === 0) {
+      alert("No items are checked off.");
+      return;
+    }
+
+    if (
+      confirm(`Remove ${checkedItems.length} checked item(s) from the list?`)
+    ) {
+      checkedItems.forEach((item) => {
+        item.style.opacity = "0";
+        setTimeout(() => item.remove(), 300);
+      });
+      setTimeout(updateCounts, 300);
+    }
+  }
+
+  function editQuantity(itemId, itemName, currentQuantity) {
+    const newQuantity = prompt(
+      `Enter new quantity needed for "${itemName}":`,
+      currentQuantity
+    );
+    if (newQuantity && !isNaN(newQuantity) && newQuantity > 0) {
+      // Update the display
+      const quantityElement = document.querySelector(
+        `[data-item-id="${itemId}"] strong`
+      );
+      if (quantityElement) {
+        quantityElement.textContent = `${newQuantity} units`;
+      }
+
+      // In a real app, you'd save this to the backend
+      console.log(`Updated ${itemName} quantity to ${newQuantity}`);
+    }
+  }
+
+  function addNote(itemId, itemName) {
+    const note = prompt(
+      `Add a note for "${itemName}":`,
+      itemNotes[itemId] || ""
+    );
+    if (note !== null) {
+      itemNotes[itemId] = note;
+      const notesDiv = document.getElementById(`notes-${itemId}`);
+      const noteText = document.getElementById(`note-text-${itemId}`);
+
+      if (note.trim()) {
+        noteText.textContent = note;
+        notesDiv.style.display = "block";
+      } else {
+        notesDiv.style.display = "none";
+      }
+    }
+  }
+
+  function exportList() {
+    const items = [];
+    document
+      .querySelectorAll(".shopping-item:not(.checked)")
+      .forEach((item) => {
+        const name = item.querySelector("h6").textContent;
+        const quantity = item.querySelector("strong").textContent;
+        items.push(`${name} - ${quantity}`);
+      });
+
+    const content =
+      "Shopping List\n" + "=".repeat(20) + "\n" + items.join("\n");
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "shopping-list.txt";
+    a.click();
+    window.URL.revokeObjectURL(url);
+  }
+
+  function shareList() {
+    const items = [];
+    document
+      .querySelectorAll(".shopping-item:not(.checked)")
+      .forEach((item) => {
+        const name = item.querySelector("h6").textContent;
+        const quantity = item.querySelector("strong").textContent;
+        items.push(`• ${name} - ${quantity}`);
+      });
+
+    const shareText = `🛒 Shopping List:\n\n${items.join("\n")}`;
+
+    if (navigator.share) {
+      navigator.share({
+        title: "Shopping List",
+        text: shareText,
+      });
+    } else {
+      navigator.clipboard.writeText(shareText).then(() => {
+        alert("Shopping list copied to clipboard!");
+      });
+    }
+  }
+
+  // Initialize counts on page load
+  document.addEventListener("DOMContentLoaded", function () {
+    updateCounts();
+  });
+</script>
+{% endblock %}

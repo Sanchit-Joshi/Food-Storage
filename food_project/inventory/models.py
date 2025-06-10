@@ -32,7 +32,7 @@ from datetime import date
 UNIT_CHOICES = [
     ('kg', 'Kilograms'),
     ('g', 'Grams'),
-    ('l', 'Litres'),s
+    ('l', 'Litres'),
     ('ml', 'Millilitres'),
     ('packs', 'Packs'),
 ]

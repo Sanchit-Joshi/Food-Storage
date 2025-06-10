@@ -1,35 +1,156 @@
-{% load widget_tweaks %}
-{% include 'inventory/header.html' %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Add Category</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-<div class="container mt-5">
-    <h2>Add New Category</h2>
-    {% if messages %}
-    {% for message in messages %}
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    {% endfor %}
-{% endif %}
-    <form method="POST">
-        {% csrf_token %}
-        <div class="mb-3">
-            <label for="id_name" class="form-label">Category Name</label>
-            {{ form.name|add_class:"form-control" }}
-        </div>
-        <div class="mb-3">
-            <label for="id_ideal_quantity" class="form-label">Ideal Quantity</label>
-            {{ form.ideal_quantity|add_class:"form-control" }}
-        </div>
-        <button type="submit" class="btn btn-success">Add Category</button>
-    </form>
+{% extends 'inventory/base.html' %} {% load widget_tweaks %} {% block title
+%}Add Category - Food Storage Manager{% endblock %} {% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1><i class="fas fa-tags me-3"></i>Add New Category</h1>
+    <p>Create a new category to organize your food items</p>
+  </div>
 </div>
-</body>
-</html>
+
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="mb-0">
+            <i class="fas fa-plus-circle me-2"></i>Category Details
+          </h4>
+        </div>
+        <div class="card-body p-4">
+          <form method="POST">
+            {% csrf_token %}
+
+            <div class="row g-4">
+              <div class="col-12">
+                <label for="id_name" class="form-label">
+                  <i class="fas fa-tag me-1"></i>Category Name *
+                </label>
+                {{ form.name|add_class:"form-control" }} {% if form.name.errors
+                %}
+                <div class="invalid-feedback d-block">
+                  {% for error in form.name.errors %}
+                  <i class="fas fa-exclamation-circle me-1"></i>{{ error }} {%
+                  endfor %}
+                </div>
+                {% endif %}
+                <div class="form-text">
+                  <i class="fas fa-info-circle me-1"></i>
+                  Choose a descriptive name like "Vegetables", "Dairy",
+                  "Spices", etc.
+                </div>
+              </div>
+
+              <div class="col-12">
+                <label for="id_ideal_quantity" class="form-label">
+                  <i class="fas fa-target me-1"></i>Default Ideal Quantity
+                </label>
+                {{ form.ideal_quantity|add_class:"form-control" }} {% if
+                form.ideal_quantity.errors %}
+                <div class="invalid-feedback d-block">
+                  {% for error in form.ideal_quantity.errors %}
+                  <i class="fas fa-exclamation-circle me-1"></i>{{ error }} {%
+                  endfor %}
+                </div>
+                {% endif %}
+                <div class="form-text">
+                  <i class="fas fa-lightbulb me-1"></i>
+                  This will be the default ideal quantity for new items in this
+                  category
+                </div>
+              </div>
+            </div>
+
+            <hr class="my-4" />
+
+            <div class="d-flex justify-content-between">
+              <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Cancel
+              </a>
+
+              <div class="d-flex gap-2">
+                <button
+                  type="submit"
+                  name="save_and_add"
+                  class="btn btn-outline-primary"
+                >
+                  <i class="fas fa-plus me-1"></i>Save & Add Another
+                </button>
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-save me-1"></i>Save Category
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Quick Tips Card -->
+      <div class="card mt-4">
+        <div class="card-header">
+          <h6 class="mb-0">
+            <i class="fas fa-lightbulb me-2"></i>Category Examples
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="d-flex align-items-center mb-2">
+                <span class="badge bg-success me-2">🥬</span>
+                <span>Vegetables & Fruits</span>
+              </div>
+              <div class="d-flex align-items-center mb-2">
+                <span class="badge bg-info me-2">🥛</span>
+                <span>Dairy Products</span>
+              </div>
+              <div class="d-flex align-items-center mb-2">
+                <span class="badge bg-warning me-2">🍖</span>
+                <span>Meat & Poultry</span>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="d-flex align-items-center mb-2">
+                <span class="badge bg-primary me-2">🌾</span>
+                <span>Grains & Cereals</span>
+              </div>
+              <div class="d-flex align-items-center mb-2">
+                <span class="badge bg-secondary me-2">🧂</span>
+                <span>Spices & Seasonings</span>
+              </div>
+              <div class="d-flex align-items-center mb-2">
+                <span class="badge bg-danger me-2">🍪</span>
+                <span>Snacks & Treats</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Add input validation feedback
+    const form = document.querySelector("form");
+    const inputs = form.querySelectorAll("input");
+
+    inputs.forEach((input) => {
+      input.addEventListener("blur", function () {
+        if (this.hasAttribute("required") && !this.value.trim()) {
+          this.classList.add("is-invalid");
+        } else if (this.value.trim()) {
+          this.classList.remove("is-invalid");
+          this.classList.add("is-valid");
+        }
+      });
+
+      input.addEventListener("input", function () {
+        if (this.classList.contains("is-invalid") && this.value.trim()) {
+          this.classList.remove("is-invalid");
+          this.classList.add("is-valid");
+        }
+      });
+    });
+  });
+</script>
+{% endblock %}
