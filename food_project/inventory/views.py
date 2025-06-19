@@ -87,6 +87,7 @@ def search_food(request):
 
     return render(request, 'inventory/search_results.html', {'foods': foods, 'query': query})
 
+
 def shopping_list(request):
     foods = Food.objects.all()
     items_to_buy = []
