@@ -5,7 +5,8 @@ __pycache__/
 
 # C extensions
 *.so
-
+keys of gitlabs
+keys of gitlabs.pub
 # Distribution / packaging
 .Python
 build/

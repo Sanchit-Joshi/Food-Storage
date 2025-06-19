@@ -1,5 +1,9 @@
-{% extends 'inventory/base.html' %} {% load widget_tweaks %} {% block title
-%}Add Food Item - Food Storage Manager{% endblock %} {% block content %}
+{% extends 'inventory/base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Add Food Item - Food Storage Manager{% endblock %}
+
+{% block content %}
 <div class="page-header">
   <div class="container">
     <h1><i class="fas fa-plus-circle me-3"></i>Add New Food Item</h1>
@@ -12,88 +16,73 @@
     <div class="col-lg-8">
       <div class="card">
         <div class="card-header">
-          <h4 class="mb-0">
-            <i class="fas fa-utensils me-2"></i>Food Item Details
-          </h4>
+          <h4 class="mb-0"><i class="fas fa-utensils me-2"></i>Food Item Details</h4>
         </div>
         <div class="card-body p-4">
           <form method="POST" novalidate>
             {% csrf_token %}
-
             <div class="row g-4">
               <div class="col-md-6">
-                <label for="id_name" class="form-label">
-                  <i class="fas fa-tag me-1"></i>Item Name *
-                </label>
-                {{ form.name|add_class:"form-control" }} {% if form.name.errors
-                %}
+                <label for="id_name" class="form-label"><i class="fas fa-tag me-1"></i>Item Name *</label>
+                {{ form.name|add_class:"form-control" }}
+                {% if form.name.errors %}
                 <div class="invalid-feedback d-block">
                   {% for error in form.name.errors %}
-                  <i class="fas fa-exclamation-circle me-1"></i>{{ error }} {%
-                  endfor %}
+                  <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                  {% endfor %}
                 </div>
                 {% endif %}
               </div>
 
               <div class="col-md-6">
-                <label for="id_category" class="form-label">
-                  <i class="fas fa-list me-1"></i>Category *
-                </label>
-                {{ form.category|add_class:"form-control" }} {% if
-                form.category.errors %}
+                <label for="id_category" class="form-label"><i class="fas fa-list me-1"></i>Category *</label>
+                {{ form.category|add_class:"form-control" }}
+                {% if form.category.errors %}
                 <div class="invalid-feedback d-block">
                   {% for error in form.category.errors %}
-                  <i class="fas fa-exclamation-circle me-1"></i>{{ error }} {%
-                  endfor %}
+                  <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                  {% endfor %}
                 </div>
                 {% endif %}
                 <div class="form-text">
                   <i class="fas fa-info-circle me-1"></i>
                   Don't see your category?
-                  <a href="{% url 'add_category' %}" target="_blank"
-                    >Add a new category</a
-                  >
+                  <a href="{% url 'add_category' %}" target="_blank">Add a new category</a>
                 </div>
               </div>
 
               <div class="col-md-4">
-                <label for="id_quantity" class="form-label">
-                  <i class="fas fa-boxes me-1"></i>Current Quantity *
-                </label>
-                {{ form.quantity|add_class:"form-control" }} {% if
-                form.quantity.errors %}
+                <label for="id_quantity" class="form-label"><i class="fas fa-boxes me-1"></i>Current Quantity *</label>
+                {{ form.quantity|add_class:"form-control" }}
+                {% if form.quantity.errors %}
                 <div class="invalid-feedback d-block">
                   {% for error in form.quantity.errors %}
-                  <i class="fas fa-exclamation-circle me-1"></i>{{ error }} {%
-                  endfor %}
+                  <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                  {% endfor %}
                 </div>
                 {% endif %}
               </div>
 
               <div class="col-md-4">
-                <label for="id_unit" class="form-label">
-                  <i class="fas fa-weight me-1"></i>Unit
-                </label>
-                {{ form.unit|add_class:"form-control" }} {% if form.unit.errors
-                %}
+                <label for="id_unit" class="form-label"><i class="fas fa-weight me-1"></i>Unit</label>
+                {{ form.unit|add_class:"form-control" }}
+                {% if form.unit.errors %}
                 <div class="invalid-feedback d-block">
                   {% for error in form.unit.errors %}
-                  <i class="fas fa-exclamation-circle me-1"></i>{{ error }} {%
-                  endfor %}
+                  <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                  {% endfor %}
                 </div>
                 {% endif %}
               </div>
 
               <div class="col-md-4">
-                <label for="id_ideal_quantity" class="form-label">
-                  <i class="fas fa-target me-1"></i>Ideal Quantity
-                </label>
-                {{ form.ideal_quantity|add_class:"form-control" }} {% if
-                form.ideal_quantity.errors %}
+                <label for="id_ideal_quantity" class="form-label"><i class="fas fa-target me-1"></i>Ideal Quantity</label>
+                {{ form.ideal_quantity|add_class:"form-control" }}
+                {% if form.ideal_quantity.errors %}
                 <div class="invalid-feedback d-block">
                   {% for error in form.ideal_quantity.errors %}
-                  <i class="fas fa-exclamation-circle me-1"></i>{{ error }} {%
-                  endfor %}
+                  <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                  {% endfor %}
                 </div>
                 {% endif %}
                 <div class="form-text">
@@ -103,15 +92,13 @@
               </div>
 
               <div class="col-12">
-                <label for="id_best_before" class="form-label">
-                  <i class="fas fa-calendar-alt me-1"></i>Best Before Date
-                </label>
-                {{ form.best_before|add_class:"form-control" }} {% if
-                form.best_before.errors %}
+                <label for="id_best_before" class="form-label"><i class="fas fa-calendar-alt me-1"></i>Best Before Date</label>
+                {{ form.best_before|add_class:"form-control" }}
+                {% if form.best_before.errors %}
                 <div class="invalid-feedback d-block">
                   {% for error in form.best_before.errors %}
-                  <i class="fas fa-exclamation-circle me-1"></i>{{ error }} {%
-                  endfor %}
+                  <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                  {% endfor %}
                 </div>
                 {% endif %}
                 <div class="form-text">
@@ -129,11 +116,7 @@
               </a>
 
               <div class="d-flex gap-2">
-                <button
-                  type="submit"
-                  name="save_and_add"
-                  class="btn btn-outline-primary"
-                >
+                <button type="submit" name="save_and_add" class="btn btn-outline-primary">
                   <i class="fas fa-plus me-1"></i>Save & Add Another
                 </button>
                 <button type="submit" class="btn btn-primary">
@@ -173,20 +156,20 @@
             <div class="col-md-6">
               <div class="d-flex">
                 <i class="fas fa-check-circle text-success me-2 mt-1"></i>
-                <small
-                  >Organize items by categories for better management</small
-                >
+                <small>Organize items by categories for better management</small>
               </div>
             </div>
           </div>
         </div>
       </div>
+
     </div>
   </div>
 </div>
-{% endblock %} {% block extra_js %}
+{% endblock %}
+
+{% block extra_js %}
 <script>
-  // Auto-format date input
   document.addEventListener("DOMContentLoaded", function () {
     const dateInput = document.querySelector('input[type="date"]');
     if (dateInput && !dateInput.value) {
@@ -194,7 +177,6 @@
       dateInput.value = today;
     }
 
-    // Add input validation feedback
     const form = document.querySelector("form");
     const inputs = form.querySelectorAll("input, select");
 

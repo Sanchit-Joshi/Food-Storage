@@ -1,5 +1,10 @@
-{% extends 'inventory/base.html' %} {% block title %}Search Results - Food
-Storage Manager{% endblock %} {% block content %}
+{% extends 'inventory/base.html' %}
+
+{% block title %}
+Search Results - Food Storage Manager
+{% endblock %}
+
+{% block content %}
 <div class="page-header">
   <div class="container">
     <h1><i class="fas fa-search me-3"></i>Search Results</h1>
@@ -41,8 +46,7 @@ Storage Manager{% endblock %} {% block content %}
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h5 class="mb-0">
       <i class="fas fa-list-ul me-2"></i>
-      Found {{ foods|length }} result{{ foods|length|pluralize }} {% if query
-      %}for "{{ query }}"{% endif %}
+      Found {{ foods|length }} result{{ foods|length|pluralize }} {% if query %}for "{{ query }}"{% endif %}
     </h5>
     <div class="btn-group" role="group">
       <button class="btn btn-outline-secondary" onclick="toggleView('grid')">
@@ -65,7 +69,8 @@ Storage Manager{% endblock %} {% block content %}
           <span class="badge bg-danger">
             <i class="fas fa-exclamation-triangle me-1"></i>Expiring Soon
           </span>
-          {% endif %} {% if food.quantity < food.ideal_quantity %}
+          {% endif %}
+          {% if food.quantity < food.ideal_quantity %}
           <span class="badge bg-warning text-dark">
             <i class="fas fa-arrow-down me-1"></i>Low Stock
           </span>
@@ -98,9 +103,7 @@ Storage Manager{% endblock %} {% block content %}
                 <i class="fas fa-target text-success me-2"></i>
                 <div>
                   <small class="text-muted">Ideal Qty</small>
-                  <div class="fw-bold">
-                    {{ food.ideal_quantity }} {{ food.unit }}
-                  </div>
+                  <div class="fw-bold">{{ food.ideal_quantity }} {{ food.unit }}</div>
                 </div>
               </div>
             </div>
@@ -138,14 +141,14 @@ Storage Manager{% endblock %} {% block content %}
           <div class="d-flex justify-content-between align-items-center">
             <small class="text-muted">
               <i class="fas fa-clock me-1"></i>
-              {% if food.best_before|timeuntil:"0" < "0 days" %} Expired {% else
-              %} {{ food.best_before|timeuntil }} left {% endif %}
+              {% if food.best_before|timeuntil:"0" < "0 days" %}
+                Expired
+              {% else %}
+                {{ food.best_before|timeuntil }} left
+              {% endif %}
             </small>
             <div class="btn-group btn-group-sm" role="group">
-              <a
-                href="{% url 'edit_food' food.id %}"
-                class="btn btn-outline-primary"
-              >
+              <a href="{% url 'edit_food' food.id %}" class="btn btn-outline-primary">
                 <i class="fas fa-edit"></i>
               </a>
               <button
@@ -162,8 +165,8 @@ Storage Manager{% endblock %} {% block content %}
     {% endfor %}
   </div>
 
-  <!-- Search Suggestions -->
-  {% if not foods and query %}
+  {% elif query %}
+  <!-- No Results Found -->
   <div class="card mt-4">
     <div class="card-body text-center">
       <h5><i class="fas fa-search-minus me-2"></i>No Results Found</h5>
@@ -175,28 +178,16 @@ Storage Manager{% endblock %} {% block content %}
         <div class="col-md-6">
           <h6><i class="fas fa-lightbulb me-1"></i>Search Tips:</h6>
           <ul class="list-unstyled small text-start">
-            <li>
-              <i class="fas fa-check text-success me-1"></i>Try different
-              keywords
-            </li>
-            <li>
-              <i class="fas fa-check text-success me-1"></i>Check your spelling
-            </li>
-            <li>
-              <i class="fas fa-check text-success me-1"></i>Use partial words
-            </li>
-            <li>
-              <i class="fas fa-check text-success me-1"></i>Search by category
-            </li>
+            <li><i class="fas fa-check text-success me-1"></i>Try different keywords</li>
+            <li><i class="fas fa-check text-success me-1"></i>Check your spelling</li>
+            <li><i class="fas fa-check text-success me-1"></i>Use partial words</li>
+            <li><i class="fas fa-check text-success me-1"></i>Search by category</li>
           </ul>
         </div>
         <div class="col-md-6">
           <h6><i class="fas fa-plus me-1"></i>Quick Actions:</h6>
           <div class="d-grid gap-2">
-            <a
-              href="{% url 'add_food' %}"
-              class="btn btn-outline-primary btn-sm"
-            >
+            <a href="{% url 'add_food' %}" class="btn btn-outline-primary btn-sm">
               <i class="fas fa-plus me-1"></i>Add "{{ query }}" to Inventory
             </a>
             <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm">
@@ -207,8 +198,9 @@ Storage Manager{% endblock %} {% block content %}
       </div>
     </div>
   </div>
-  {% endif %} {% else %}
-  <!-- No search performed yet -->
+
+  {% else %}
+  <!-- No Search Yet -->
   <div class="text-center py-5">
     <div class="mb-4">
       <i class="fas fa-search text-muted" style="font-size: 4rem"></i>
@@ -224,111 +216,16 @@ Storage Manager{% endblock %} {% block content %}
         <h6 class="mb-0"><i class="fas fa-fire me-2"></i>Popular Searches</h6>
       </div>
       <div class="card-body">
-        <div class="d-flex flex-wrap justify-content-center gap-2">
-          <a
-            href="{% url 'search_food' %}?q=vegetables"
-            class="btn btn-outline-primary btn-sm"
-            >Vegetables</a
-          >
-          <a
-            href="{% url 'search_food' %}?q=dairy"
-            class="btn btn-outline-primary btn-sm"
-            >Dairy</a
-          >
-          <a
-            href="{% url 'search_food' %}?q=meat"
-            class="btn btn-outline-primary btn-sm"
-            >Meat</a
-          >
-          <a
-            href="{% url 'search_food' %}?q=snacks"
-            class="btn btn-outline-primary btn-sm"
-            >Snacks</a
-          >
-          <a
-            href="{% url 'search_food' %}?q=fruits"
-            class="btn btn-outline-primary btn-sm"
-            >Fruits</a
-          >
-          <a
-            href="{% url 'search_food' %}?q=grains"
-            class="btn btn-outline-primary btn-sm"
-            >Grains</a
-          >
+        <div class="d-flex flex-wrap gap-2">
+          <a href="{% url 'search_food' %}?q=milk" class="btn btn-outline-secondary btn-sm">Milk</a>
+          <a href="{% url 'search_food' %}?q=eggs" class="btn btn-outline-secondary btn-sm">Eggs</a>
+          <a href="{% url 'search_food' %}?q=cheese" class="btn btn-outline-secondary btn-sm">Cheese</a>
+          <a href="{% url 'search_food' %}?q=vegetables" class="btn btn-outline-secondary btn-sm">Vegetables</a>
+          <a href="{% url 'search_food' %}?q=fruits" class="btn btn-outline-secondary btn-sm">Fruits</a>
         </div>
       </div>
     </div>
   </div>
   {% endif %}
 </div>
-{% endblock %} {% block extra_js %}
-<script>
-  function toggleView(viewType) {
-    const resultsContainer = document.getElementById("searchResults");
-    const items = resultsContainer.querySelectorAll(".search-result-item");
-
-    if (viewType === "list") {
-      resultsContainer.className = "row g-2";
-      items.forEach((item) => {
-        item.className = "col-12 search-result-item";
-      });
-    } else {
-      resultsContainer.className = "row g-4";
-      items.forEach((item) => {
-        item.className = "col-lg-6 search-result-item";
-      });
-    }
-  }
-
-  function deleteItem(itemId, itemName) {
-    if (confirm(`Are you sure you want to delete "${itemName}"?`)) {
-      window.location.href = `/inventory/delete_food/${itemId}/`;
-    }
-  }
-
-  // Highlight search terms in results
-  document.addEventListener("DOMContentLoaded", function () {
-    const query = "{{ query|escapejs }}";
-    if (query && query.length > 2) {
-      highlightSearchTerms(query);
-    }
-  });
-
-  function highlightSearchTerms(query) {
-    const terms = query.toLowerCase().split(" ");
-    const textNodes = [];
-
-    // Find all text nodes
-    function findTextNodes(node) {
-      if (node.nodeType === Node.TEXT_NODE) {
-        textNodes.push(node);
-      } else {
-        for (let child of node.childNodes) {
-          findTextNodes(child);
-        }
-      }
-    }
-
-    findTextNodes(document.getElementById("searchResults"));
-
-    // Highlight terms
-    textNodes.forEach((node) => {
-      let text = node.textContent;
-      let highlightedText = text;
-
-      terms.forEach((term) => {
-        if (term.length > 2) {
-          const regex = new RegExp(`(${term})`, "gi");
-          highlightedText = highlightedText.replace(regex, "<mark>$1</mark>");
-        }
-      });
-
-      if (highlightedText !== text) {
-        const wrapper = document.createElement("span");
-        wrapper.innerHTML = highlightedText;
-        node.parentNode.replaceChild(wrapper, node);
-      }
-    });
-  }
-</script>
 {% endblock %}
