@@ -79,13 +79,17 @@ def expiring_soon(request):
 
 
 def search_food(request):
-    query = request.GET.get('q', '')  # Get the search query from the URL parameter 'q'
+    # Get the search query from the URL parameter 'q'
+    query = request.GET.get('q', '')
     if query:
         foods = Food.objects.filter(name__icontains=query)
     else:
         foods = Food.objects.all()  # If no query, return all foods
 
-    return render(request, 'inventory/search_results.html', {'foods': foods, 'query': query})
+    return render(
+        request, 'inventory/search_results.html',
+        {'foods': foods, 'query': query}
+    )
 
 
 def shopping_list(request):
@@ -102,4 +106,8 @@ def shopping_list(request):
                 # 'category': food.category,
             })
 
-    return render(request, 'inventory/shopping_list.html', {'items_to_buy': items_to_buy})
+    return render(
+        request, 'inventory/shopping_list.html',
+        {'items_to_buy': items_to_buy}
+    )
+
